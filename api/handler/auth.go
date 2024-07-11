@@ -13,10 +13,10 @@ import (
 // @Description Logout the authenticated user
 // @Tags Auth
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
 // @Param user-id path string true "User ID"
-// @Success 200 {object} pb.LogoutResponse
+// @Success 200 {object} auth_service.LogoutResponse
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/auth/logout/{user-id} [post]
 func (h *Handler) LogoutUserHandler(ctx *gin.Context) {
@@ -39,10 +39,10 @@ func (h *Handler) LogoutUserHandler(ctx *gin.Context) {
 // @Description Get profile of the authenticated user
 // @Tags Auth
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
 // @Param username path string true "Username"
-// @Success 200 {object} pb.GetUserProfileResponse
+// @Success 200 {object} auth_service.GetUserProfileResponse
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/auth/profile/{username} [get]
 func (h *Handler) GetUserProfileHandler(ctx *gin.Context) {
@@ -65,11 +65,11 @@ func (h *Handler) GetUserProfileHandler(ctx *gin.Context) {
 // @Description Update the profile of the authenticated user
 // @Tags Auth
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
 // @Param user-id path string true "User ID"
-// @Param profile body pb.UpdateUserProfileRequest true "Profile"
-// @Success 200 {object} pb.UpdateUserProfileResponse
+// @Param profile body auth_service.UpdateUserProfileRequest true "Profile"
+// @Success 200 {object} auth_service.UpdateUserProfileResponse
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/auth/profile/{user-id} [put]
 func (h *Handler) UpdateUserProfile(ctx *gin.Context) {
