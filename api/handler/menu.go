@@ -11,7 +11,7 @@ import (
 //@Description Create a new MenuItem
 //@Tags MenuItem
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
 //@Param MenuItem body reservation_service.CreateMenuItemRequest true "Create MenuItem"
 //@Succes 200 {object} reservation_service.CreateMenuItemResponce
@@ -44,9 +44,9 @@ func (h *Handler) CreateMenuItemHandler(ctx *gin.Context) {
 //@Description List all MenuItem
 //@Tags MenuItem
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
-//@Success 200 {object} reservation_service.ListMenuItemRequest
+//@Success 200 {object} reservation_service.ListMenuItemsRequest
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/menu [get]
@@ -74,10 +74,10 @@ func (h *Handler) ListMenuItemsHandler(ctx *gin.Context) {
 //@Description Get a specific MenuItem by ID
 //@Tags MenuItem
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
 //@Param menu-id path string true "Menu ID"
-//@Success 200 {object} reservation_service.GetMenuItemResponce
+//@Success 200 {object} reservation_service.GetMenuItemResponse
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/menu/{menu-id} [get]
@@ -99,11 +99,11 @@ func (h *Handler) GetMenuItemHandler(ctx *gin.Context) {
 //@Descripton Update an existing reservation
 //@Tags MenuItem
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
 //@Param menu-id path string true "Menu ID"
 //@Param Menu body reservation_service.UpdateMenuItemRequest true "Update MenuItem"
-//@Success 200 {object} reservation_service.UpdateMenuItemResponce
+//@Success 200 {object} reservation_service.UpdateMenuItemResponse
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/menu/{menu-id} [put]
@@ -136,10 +136,10 @@ func (h *Handler) UpdateMenuItemHandler(ctx *gin.Context) {
 //@Description Delete a specific MenuItem by ID
 //@Tags MenuItem
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
 //@Param menu-id path string true "Menu ID"
-//@Success 200 {object} reservation_service.DeleteMenuItemResponce
+//@Success 200 {object} reservation_service.DeleteMenuItemResponse
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/menu/{menu-id} [delete]

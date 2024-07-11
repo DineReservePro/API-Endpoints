@@ -11,10 +11,10 @@ import (
 // @Description Create a new reservation
 // @Tags Reservation
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
-// @Param Reservation body pb.CreateReservationRequest true "Create Reservation"
-// @Success 200 {object} pb.CreateReservationResponse
+// @Param Reservation body reservation_service.CreateReservationRequest true "Create Reservation"
+// @Success 200 {object} reservation_service.CreateReservationResponse
 // @Failure 400 {object} string "Bad Request"
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations [post]
@@ -44,9 +44,9 @@ func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 // @Description List all reservations
 // @Tags Reservation
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
-// @Success 200 {object} pb.ListReservationsResponse
+// @Success 200 {object} reservation_service.ListReservationsResponse
 // @Failure 400 {object} string "Bad Request"
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations [get]
@@ -78,10 +78,10 @@ func (h *Handler) ListReservationHandler(ctx *gin.Context) {
 // @Description Get a specific reservation by ID
 // @Tags Reservation
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
 // @Param reservation-id path string true "Reservation ID"
-// @Success 200 {object} pb.GetReservationResponse
+// @Success 200 {object} reservation_service.GetReservationResponse
 // @Failure 400 {object} string "Bad Request"
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/{reservation-id} [get]
@@ -104,11 +104,11 @@ func (h *Handler) GetReservationHandler(ctx *gin.Context) {
 // @Description Update an existing reservation
 // @Tags Reservation
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
 // @Param reservation-id path string true "Reservation ID"
-// @Param Reservation body pb.UpdateReservationRequest true "Update Reservation"
-// @Success 200 {object} pb.UpdateReservationResponse
+// @Param Reservation body reservation_service.UpdateReservationRequest true "Update Reservation"
+// @Success 200 {object} reservation_service.UpdateReservationResponse
 // @Failure 400 {object} string "Bad Request"
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/{reservation-id} [put]
@@ -141,10 +141,10 @@ func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
 // @Description Delete a specific reservation by ID
 // @Tags Reservation
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
 // @Param reservation-id path string true "Reservation ID"
-// @Success 200 {object} pb.DeleteReservationResponse
+// @Success 200 {object} reservation_service.DeleteReservationResponse
 // @Failure 400 {object} string "Bad Request"
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/{reservation-id} [delete]
@@ -177,10 +177,10 @@ func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
 // @Description Check the status of a reservation
 // @Tags Reservation
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
-// @Param Check body pb.CheckReservationRequest true "Check Reservation"
-// @Success 200 {object} pb.CheckReservationResponse
+// @Param Check body reservation_service.CheckReservationRequest true "Check Reservation"
+// @Success 200 {object} reservation_service.CheckReservationResponse
 // @Failure 400 {object} string "Bad Request"
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/check [post]
@@ -210,10 +210,10 @@ func (h *Handler) CheckReservationHandler(ctx *gin.Context) {
 // @Description Order meals for a reservation
 // @Tags Reservation
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
-// @Param Order body pb.OrderMealsRequest true "Order Meals"
-// @Success 200 {object} pb.OrderMealsResponse
+// @Param Order body reservation_service.OrderMealsRequest true "Order Meals"
+// @Success 200 {object} reservation_service.OrderMealsResponse
 // @Failure 400 {object} string "Bad Request"
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/order [post]
