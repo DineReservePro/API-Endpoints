@@ -13,6 +13,7 @@ type Config struct {
 	AUTH_PORT        string
 	PAYMENT_PORT     string
 	RESERVATION_PORT string
+	ACCESS_TOKEN     string
 }
 
 func Load() Config {
@@ -25,6 +26,7 @@ func Load() Config {
 	cfg.AUTH_PORT = cast.ToString(Coalesce("AUTH_PORT", ":50050"))
 	cfg.RESERVATION_PORT = cast.ToString(Coalesce("RESERVATION_PORT", "50051"))
 	cfg.PAYMENT_PORT = cast.ToString(Coalesce("PAYMENT_PORT", ":50052"))
+	cfg.ACCESS_TOKEN = cast.ToString(Coalesce("ACCESS_TOKEN", "my_secret_key"))
 
 	return cfg
 }
