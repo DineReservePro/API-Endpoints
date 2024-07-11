@@ -12,10 +12,10 @@ import (
 // @Description Create a new payment record
 // @Tags Payment
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
-// @Param Payment body pb.CreatePaymentRequest true "Create Payment"
-// @Success 200 {object} pb.CreatePaymentResponse
+// @Param Payment body payment_service.CreatePaymentRequest true "Create Payment"
+// @Success 200 {object} payment_service.CreatePaymentResponse
 // @Failure 400 {object} string "Bad Request"
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/payments/ [post]
@@ -45,10 +45,10 @@ func (h *Handler) CreatePaymentHandler(ctx *gin.Context) {
 // @Description Get a payment record
 // @Tags Payment
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
 // @Param payment-id path string true "payment-id"
-// @Success 200 {object} pb.GetPaymentResponse
+// @Success 200 {object} payment_service.GetPaymentResponse
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/payments/{payment-id} [get]
 func (h *Handler) GetPaymentHandler(ctx *gin.Context) {
@@ -70,11 +70,11 @@ func (h *Handler) GetPaymentHandler(ctx *gin.Context) {
 // @Description Update the payment of record 
 // @Tags Payment
 // @Accept json
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Produce json
 // @Param payment-id path string true "Payment Id"
-// @Param profile body pb.UpdatePaymentHandler true "Payment"
-// @Success 200 {object} pb.UpdatePaymentRequest
+// @Param profile body payment_service.UpdatePaymentRequest true "Payment"
+// @Success 200 {object} payment_service.UpdatePaymentResponse
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/payments/{payment-id} [put]
 func (h *Handler) UpdatePaymentHandler(ctx *gin.Context) {

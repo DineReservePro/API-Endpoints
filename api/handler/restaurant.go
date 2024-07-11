@@ -10,10 +10,10 @@ import (
 //@Description  Create a new Restaurant
 //@Tags Restaurant
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
 //@Param Restaurant body reservation_service.CreateRestaurantRequest true "Create Restaurant"
-//@Success 200 {object} reservation_service.CreateRestaurantResponce
+//@Success 200 {object} reservation_service.CreateRestaurantResponse
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/restaurant [post]
@@ -42,9 +42,9 @@ func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 //@Description List all Restaurant
 //@Tags Restaurant
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
-//@Succes 200 {object} reservation_service.ListRestaurantResponce
+//@Succes 200 {object} reservation_service.ListRestaurantResponse
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/restaurant [get]
@@ -57,18 +57,28 @@ func (h *Handler) ListRestaurantsHandler(ctx *gin.Context) {
 		})
 		return
 	}
+	if filter.Limit == 0{
+		filter.Limit = 10
+	}
 
-
+	res,err := h.Reservation.ListRestaurants(ctx,&filter)
+	if err != nil{
+		ctx.JSON(http.StatusBadRequest,gin.H{
+			"ERROR" : err.Error(),
+		})
+		return
+	}
+	ctx.JSON(200,res)
 }
 
 //@Summary Get Restaurant
 //@Description Get Restaurant By ID
 //@Tags Restaurant
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
-//@Param restaurant-id path string "Restaurant ID"
-//@Success 200 {object} reservation_service.GetRestaurantResponce
+//@Param restaurant-id path string true "Restaurant ID"
+//@Success 200 {object} reservation_service.GetRestaurantResponse
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/restaurant/{restaurant-id} [get]
@@ -90,11 +100,11 @@ func (h *Handler) GetRestaurantHandler(ctx *gin.Context) {
 //@Description Update an existing restaurant 
 //@Tags Restaurant
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
-//@Param restaurant-id path string true "Rstaurant ID"
+//@Param restaurant-id path string true "Restaurant ID"
 //@Param Restaurant body reservation_service.UpdateRestaurantRequest true "Update Restaurant"
-//@Success 200 {object} reservation_service.UpdateRestaurantResponce
+//@Success 200 {object} reservation_service.UpdateRestaurantResponse
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/restaurant{restaurant-id} [put]
@@ -125,10 +135,10 @@ func (h *Handler) UpdateRestaurantHandler(ctx *gin.Context) {
 //@Description Delete a specific restaurant by ID
 //@Tags Restaurant
 //@Accept json
-//@Security BearerAuth
+//@Security ApiKeyAuth
 //@Produce json
 //@Param restaurant-id path string true "Restaurant ID"
-//@Success 200 {object} reservation_service.DeleteRestaurantResponce
+//@Success 200 {object} reservation_service.DeleteRestaurantResponse
 //@Failure 400 {object} string "Bad Request"
 //@Failure 500 {object} string "Interval Server Error"
 //@Router /api/restaurant/{restaurant-id} [delete]
