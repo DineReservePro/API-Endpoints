@@ -57,8 +57,18 @@ func (h *Handler) ListRestaurantsHandler(ctx *gin.Context) {
 		})
 		return
 	}
+	if filter.Limit == 0{
+		filter.Limit = 10
+	}
 
-
+	res,err := h.Reservation.ListRestaurants(ctx,&filter)
+	if err != nil{
+		ctx.JSON(http.StatusBadRequest,gin.H{
+			"ERROR" : err.Error(),
+		})
+		return
+	}
+	ctx.JSON(200,res)
 }
 
 //@Summary Get Restaurant

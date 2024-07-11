@@ -52,13 +52,23 @@ func (h *Handler) CreateMenuItemHandler(ctx *gin.Context) {
 //@Router /api/menu [get]
 func (h *Handler) ListMenuItemsHandler(ctx *gin.Context) {
 	var filter pb.ListMenuItemsRequest
-
 	if err := ctx.ShouldBindQuery(&filter); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})
 	}
+	if filter.Limit == 0{
+		filter.Limit = 10
+	}
 
+	resp,err := h.Reservation.ListMenuItems(ctx,&filter)
+	if err != nil{
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"Error": err.Error(),
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK,resp)
 }
 //@Summary Get MenuItem
 //@Description Get a specific MenuItem by ID

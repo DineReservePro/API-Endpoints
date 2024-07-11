@@ -51,7 +51,18 @@ func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations [get]
 func (h *Handler) ListReservationHandler(ctx *gin.Context) {
-	resp, err := h.Reservation.ListReservations(ctx, &pb.ListReservationsRequest{})
+	var filter pb.ListReservationsRequest
+	if err := ctx.ShouldBindQuery(&filter);err != nil{
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"Error": err.Error(),
+		})
+		return
+	}
+
+	if filter.Limit == 0{
+		filter.Limit = 10
+	}
+	resp, err := h.Reservation.ListReservations(ctx, &filter)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
@@ -59,7 +70,7 @@ func (h *Handler) ListReservationHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, resp.Reservations)
+	ctx.JSON(http.StatusOK, resp)
 }
 
 // GetReservationHandler retrieves a specific reservation by ID.
