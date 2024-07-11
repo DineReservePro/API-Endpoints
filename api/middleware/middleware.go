@@ -2,39 +2,45 @@ package middleware
 
 import (
 	"api-gateway/api/token"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-
-func JWTMiddleware()gin.HandlerFunc{
-	return func(ctx *gin.Context) {
-		auth := ctx.GetHeader("Authorization")
-
-		if auth != ""{
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized,gin.H{
-				"ERROR" : "Authorization header required",
-			})
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
+			c.Abort()
 			return
 		}
 
-		valid,err := token.ValidateToken(auth)
-		if err != nil || !valid{
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized,gin.H{
-				"ERROR" : "Invalid token",
-			})
+		valid, err := token.ValidateToken(authHeader)
+		if err != nil || !valid {
+			c.AbortWithStatusJSON(http.StatusBadRequest, fmt.Errorf("invalid token: %s", err))
 			return
 		}
 
-		claims,err := token.ExtractClaims(auth)
-		if err != nil{
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized,gin.H{
-				"ERROR" : "Invalid Token Claims",
-			})
+		claims, err := token.ExtractClaim(authHeader)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			return
 		}
-		ctx.Set("claims",claims)
-		ctx.Next()
+
+		if claims.ExpiresAt < time.Now().Unix() {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token has expired"})
+			c.Abort()
+			return
+		}
+
+		// Claimsdan ma'lumotlarni kontekstga qo'shish
+		c.Set("user_id", claims.UserId)
+		c.Set("username", claims.Username)
+		c.Set("user_email", claims.Email)
+
+		c.Next()
 	}
 }

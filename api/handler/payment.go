@@ -7,6 +7,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreatePaymentHandler handles the creation of a new payment.
+// @Summary Create Payment
+// @Description Create a new payment record
+// @Tags Payment
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param Payment body pb.CreatePaymentRequest true "Create Payment"
+// @Success 200 {object} pb.CreatePaymentResponse
+// @Failure 400 {object} string "Bad Request"
+// @Failure 500 {object} string "Internal Server Error"
+// @Router /api/payments/ [post]
 func (h *Handler) CreatePaymentHandler(ctx *gin.Context) {
 	payment := pb.CreatePaymentRequest{}
 
@@ -28,6 +40,17 @@ func (h *Handler) CreatePaymentHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp.Payment)
 }
 
+// GetPaymentHandler retrieves the payment 
+// @Summary Get payment 
+// @Description Get a payment record
+// @Tags Payment
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param payment-id path string true "payment-id"
+// @Success 200 {object} pb.GetPaymentResponse
+// @Failure 400 {object} string "Bad Request"
+// @Router /api/payments/{payment-id} [get]
 func (h *Handler) GetPaymentHandler(ctx *gin.Context) {
 	id := ctx.Param("payment-id")
 
@@ -42,7 +65,18 @@ func (h *Handler) GetPaymentHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp.Payment)
 }
 
-
+// UpdatePaymentHandler updates the payment record
+// @Summary Update Payment
+// @Description Update the payment of record 
+// @Tags Payment
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param payment-id path string true "Payment Id"
+// @Param profile body pb.UpdatePaymentHandler true "Payment"
+// @Success 200 {object} pb.UpdatePaymentRequest
+// @Failure 400 {object} string "Bad Request"
+// @Router /api/payments/{payment-id} [put]
 func (h *Handler) UpdatePaymentHandler(ctx *gin.Context) {
 	id := ctx.Param("payment-id")
 

@@ -2,42 +2,41 @@ package token
 
 import (
 	"api-gateway/config"
-	"fmt"
+	"errors"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-type Token struct {
-	AccesToken   string `json:"acces_token"`
-	RefreshToken string `json:"refersh_token"`
+type Claims struct {
+	UserId   string `json:"user_id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	jwt.StandardClaims
+}
+
+func ExtractClaim(tokenString string) (*Claims, error) {
+	cfg := config.Load()
+	claims := &Claims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(cfg.ACCESS_TOKEN), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	return claims, nil
 }
 
 func ValidateToken(tokenStr string) (bool, error) {
-	_, err := ExtractClaims(tokenStr)
+	_, err := ExtractClaim(tokenStr)
 	if err != nil {
 		return false, err
 	}
 	return true, nil
-}
-
-func ExtractClaims(tokenStr string) (jwt.MapClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, jwt.MapClaims{}, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-		}
-		return []byte(config.Load().SIGNING_KEY), nil
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse token : %v", err)
-	}
-	if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
-	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, fmt.Errorf(
-			"invalid token claims ",
-		)
-	}
-	return claims, nil
 }
