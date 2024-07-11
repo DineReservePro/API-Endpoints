@@ -13,6 +13,7 @@ type Config struct {
 	AUTH_PORT        string
 	PAYMENT_PORT     string
 	RESERVATION_PORT string
+	SIGNING_KEY      string
 }
 
 func Load() Config {
