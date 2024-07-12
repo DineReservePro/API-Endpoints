@@ -18,9 +18,11 @@ import (
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/restaurant [post]
 func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
-	var restaurant pb.CreateRestaurantRequest
+	h.Logger.Info("Handling CreateRestaurant request")
 
+	var restaurant pb.CreateRestaurantRequest
 	if err := ctx.ShouldBindJSON(&restaurant); err != nil {
+		h.Logger.Error("Error binding JSON:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})
@@ -29,6 +31,7 @@ func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 
 	resp, err := h.Reservation.CreateRestaurant(ctx, &restaurant)
 	if err != nil {
+		h.Logger.Error("Error creating restaurant:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})
@@ -49,26 +52,31 @@ func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/restaurant [get]
 func (h *Handler) ListRestaurantsHandler(ctx *gin.Context) {
-	var filter pb.ListRestaurantsRequest
+	h.Logger.Info("Handling ListRestaurants request")
 
+	var filter pb.ListRestaurantsRequest
 	if err := ctx.ShouldBindQuery(&filter); err != nil {
+		h.Logger.Error("Error binding query parameters:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"Error": err.Error(),
 		})
 		return
 	}
-	if filter.Limit == 0{
+
+	if filter.Limit == 0 {
 		filter.Limit = 10
 	}
 
-	res,err := h.Reservation.ListRestaurants(ctx,&filter)
-	if err != nil{
-		ctx.JSON(http.StatusBadRequest,gin.H{
-			"ERROR" : err.Error(),
+	res, err := h.Reservation.ListRestaurants(ctx, &filter)
+	if err != nil {
+		h.Logger.Error("Error listing restaurants:", "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"Error": err.Error(),
 		})
 		return
 	}
-	ctx.JSON(200,res)
+
+	ctx.JSON(http.StatusOK, res)
 }
 
 //@Summary Get Restaurant
@@ -83,10 +91,13 @@ func (h *Handler) ListRestaurantsHandler(ctx *gin.Context) {
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/restaurant/{restaurant-id} [get]
 func (h *Handler) GetRestaurantHandler(ctx *gin.Context) {
+	h.Logger.Info("Handling GetRestaurant request")
+
 	id := ctx.Param("restaurant-id")
 
 	resp, err := h.Reservation.GetRestaurant(ctx, &pb.GetRestaurantRequest{Id: id})
 	if err != nil {
+		h.Logger.Error("Error getting restaurant:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})
@@ -109,12 +120,15 @@ func (h *Handler) GetRestaurantHandler(ctx *gin.Context) {
 //@Failure 500 {object} string "Internal Server Error"
 //@Router /api/restaurant{restaurant-id} [put]
 func (h *Handler) UpdateRestaurantHandler(ctx *gin.Context) {
+	h.Logger.Info("Handling UpdateRestaurant request")
+
 	id := ctx.Param("restaurant-id")
 	var restaurant pb.UpdateRestaurantRequest
 
 	if err := ctx.ShouldBindJSON(&restaurant); err != nil {
+		h.Logger.Error("Error binding JSON:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"Error": err.Error(),
 		})
 		return
 	}
@@ -123,6 +137,7 @@ func (h *Handler) UpdateRestaurantHandler(ctx *gin.Context) {
 
 	resp, err := h.Reservation.UpdateRestaurant(ctx, &restaurant)
 	if err != nil {
+		h.Logger.Error("Error updating restaurant:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})
@@ -143,10 +158,13 @@ func (h *Handler) UpdateRestaurantHandler(ctx *gin.Context) {
 //@Failure 500 {object} string "Interval Server Error"
 //@Router /api/restaurant/{restaurant-id} [delete]
 func (h *Handler) DeleteRestaurantHandler(ctx *gin.Context) {
+	h.Logger.Info("Handling DeleteRestaurant request")
+
 	id := ctx.Param("restaurant-id")
-	
+
 	resp, err := h.Reservation.DeleteRestaurant(ctx, &pb.DeleteRestaurantRequest{Id: id})
 	if err != nil {
+		h.Logger.Error("Error deleting restaurant:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})

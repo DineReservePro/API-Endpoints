@@ -2,6 +2,7 @@ package api
 
 import (
 	"api-gateway/api/handler"
+	"api-gateway/api/middleware"
 
 	_ "api-gateway/api/docs"
 
@@ -24,11 +25,24 @@ func NewRouter(handle *handler.Handler) *gin.Engine {
 	// Swagger endpointini sozlash
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	router.Use(middleware.AuthMiddleware())
+	router.Use(middleware.LoggerMiddleware())
+
 	auth := router.Group("/auth")
 	{
 		auth.DELETE("/logout/:user-id", handle.LogoutUserHandler)
 		auth.GET("/profile", handle.GetUserProfileHandler)
-		auth.PUT("/profile/:user-id", handle.UpdateUserProfile)
+		auth.PUT("/profile/:user-id", handle.UpdateMenuItemHandler)
+	}
+
+	restaurant := router.Group("/restaurant")
+	{
+		restaurant.POST("/",handle.CreateRestaurantHandler)
+		restaurant.GET("/",handle.ListRestaurantsHandler)
+		restaurant.GET("/:restaurant-id",handle.GetRestaurantHandler)
+		restaurant.PUT("/:restaurant-id",handle.UpdateRestaurantHandler)
+		restaurant.DELETE("/:restaurant_id",handle.DeleteRestaurantHandler)
+		
 	}
 
 	menu := router.Group("/menu")
@@ -58,14 +72,5 @@ func NewRouter(handle *handler.Handler) *gin.Engine {
 		reservation.POST("/order",handle.OrderMealsHandler)
 	}
 
-	restaurant := router.Group("/restaurant")
-	{
-		restaurant.POST("/",handle.CreateRestaurantHandler)
-		restaurant.GET("/",handle.ListRestaurantsHandler)
-		restaurant.GET("/:restaurant-id",handle.GetRestaurantHandler)
-		restaurant.PUT("/:restaurant-id",handle.UpdateRestaurantHandler)
-		restaurant.DELETE("/:restaurant_id",handle.DeleteRestaurantHandler)
-		
-	}
 	return router
 }

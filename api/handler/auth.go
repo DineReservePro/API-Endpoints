@@ -20,11 +20,13 @@ import (
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/auth/logout/{user-id} [post]
 func (h *Handler) LogoutUserHandler(ctx *gin.Context) {
+	h.Logger.Info("Handling LogoutUser request")
+
 	id := ctx.Param("user-id")
 
 	resp, err := h.Auth.LogoutUser(ctx, &pb.LogoutRequest{UserId: id})
-	
 	if err != nil {
+		h.Logger.Error("Error logging out user:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})
@@ -46,11 +48,13 @@ func (h *Handler) LogoutUserHandler(ctx *gin.Context) {
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/auth/profile/{username} [get]
 func (h *Handler) GetUserProfileHandler(ctx *gin.Context) {
+	h.Logger.Info("Handling GetUserProfile request")
+
 	username := ctx.Param("username")
 
 	resp, err := h.Auth.GetUserProfile(ctx, &pb.GetUserProfileRequest{Username: username})
-	
 	if err != nil {
+		h.Logger.Error("Error getting user profile:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})
@@ -72,11 +76,14 @@ func (h *Handler) GetUserProfileHandler(ctx *gin.Context) {
 // @Success 200 {object} auth_service.UpdateUserProfileResponse
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/auth/profile/{user-id} [put]
-func (h *Handler) UpdateUserProfile(ctx *gin.Context) {
+func (h *Handler) UpdateUserProfileHandler(ctx *gin.Context) {
+	h.Logger.Info("Handling UpdateUserProfile request")
+
 	id := ctx.Param("user-id")
 
 	profile := pb.UpdateUserProfileRequest{}
 	if err := ctx.ShouldBindJSON(&profile); err != nil {
+		h.Logger.Error("Error binding JSON:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})
@@ -86,6 +93,7 @@ func (h *Handler) UpdateUserProfile(ctx *gin.Context) {
 
 	resp, err := h.Auth.UpdateUserProfile(ctx, &profile)
 	if err != nil {
+		h.Logger.Error("Error updating user profile:", "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"Error": err.Error(),
 		})

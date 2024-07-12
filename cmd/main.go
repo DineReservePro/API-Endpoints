@@ -3,16 +3,22 @@ package main
 import (
 	"api-gateway/api"
 	"api-gateway/api/handler"
+	"api-gateway/config"
 	"api-gateway/service"
 	"log"
 )
 
 func main() {
-	service := service.New()
+	cfg := config.Load()
+	config.InitLogger()
+	logger := config.Logger
+	logger.Info("Starting the application...")
 
-	handler := handler.NewHandler(service.Auth, service.Reservation, service.Payment)
+	srv := service.New()
+	h := handler.NewHandler(srv.Auth, srv.Reservation, srv.Payment, logger)
 
-	router := api.NewRouter(handler)
+	r := api.NewRouter(h)
 
-	log.Fatal(router.Run())
+	logger.Info("Server is running", "PORT", cfg.HTTP_PORT)
+	log.Fatal(r.Run(cfg.HTTP_PORT))
 }
