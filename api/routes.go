@@ -11,10 +11,10 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title Auth Service API
+// @title API Gateway
 // @version 1.0
-// @description This is a sample server for Auth Service.
-// @host localhost:8081
+// @description This is a sample server for API Gateway.
+// @host localhost:8080
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
@@ -28,14 +28,16 @@ func NewRouter(handle *handler.Handler) *gin.Engine {
 	router.Use(middleware.AuthMiddleware())
 	router.Use(middleware.LoggerMiddleware())
 
-	auth := router.Group("/auth")
+	r := router.Group("/api")
+
+	auth := r.Group("/auth")
 	{
 		auth.DELETE("/logout/:user-id", handle.LogoutUserHandler)
 		auth.GET("/profile", handle.GetUserProfileHandler)
 		auth.PUT("/profile/:user-id", handle.UpdateMenuItemHandler)
 	}
 
-	restaurant := router.Group("/restaurant")
+	restaurant := r.Group("/restaurant")
 	{
 		restaurant.POST("/",handle.CreateRestaurantHandler)
 		restaurant.GET("/",handle.ListRestaurantsHandler)
@@ -45,7 +47,7 @@ func NewRouter(handle *handler.Handler) *gin.Engine {
 		
 	}
 
-	menu := router.Group("/menu")
+	menu := r.Group("/menu")
 	{
 		menu.POST("/",handle.CreateMenuItemHandler)
 		menu.GET("/",handle.ListMenuItemsHandler)
@@ -54,14 +56,14 @@ func NewRouter(handle *handler.Handler) *gin.Engine {
 		menu.DELETE("/:menu-id",handle.DeleteMenuItemHandler)
 	}
 
-	payment := router.Group("/payments")
+	payment := r.Group("/payments")
 	{
 		payment.POST("/", handle.CreatePaymentHandler)
 		payment.GET("/:payment-id", handle.GetPaymentHandler)
 		payment.PUT("/:payment-id", handle.UpdatePaymentHandler)
 	}
 
-	reservation := router.GET("/reservations")
+	reservation := r.GET("/reservations")
 	{
 		reservation.POST("/",handle.CreateReservationHandler)
 		reservation.GET("/",handle.ListReservationHandler)
