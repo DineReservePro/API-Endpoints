@@ -308,11 +308,11 @@ definitions:
       restaurant:
         $ref: '#/definitions/reservation_service.Restaurant'
     type: object
-host: localhost:8081
+host: localhost:8080
 info:
   contact: {}
-  description: This is a sample server for Auth Service.
-  title: Auth Service API
+  description: This is a sample server for API Gateway.
+  title: API Gateway
   version: "1.0"
 paths:
   /api/auth/logout/{user-id}:

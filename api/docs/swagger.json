@@ -1,12 +1,12 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server for Auth Service.",
-        "title": "Auth Service API",
+        "description": "This is a sample server for API Gateway.",
+        "title": "API Gateway",
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8081",
+    "host": "localhost:8080",
     "paths": {
         "/api/auth/logout/{user-id}": {
             "post": {
