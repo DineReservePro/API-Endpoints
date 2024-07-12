@@ -20,24 +20,26 @@ import (
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/payments/ [post]
 func (h *Handler) CreatePaymentHandler(ctx *gin.Context) {
-	payment := pb.CreatePaymentRequest{}
+    payment := pb.CreatePaymentRequest{}
 
-	if err := ctx.ShouldBindJSON(&payment); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    if err := ctx.ShouldBindJSON(&payment); err != nil {
+        h.Logger.Error("Error binding JSON:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	resp, err := h.Payment.CreatePayment(ctx, &payment)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    resp, err := h.Payment.CreatePayment(ctx, &payment)
+    if err != nil {
+        h.Logger.Error("Error creating payment:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	ctx.JSON(http.StatusOK, resp.Payment)
+    ctx.JSON(http.StatusOK, resp.Payment)
 }
 
 // GetPaymentHandler retrieves the payment 
@@ -52,18 +54,22 @@ func (h *Handler) CreatePaymentHandler(ctx *gin.Context) {
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/payments/{payment-id} [get]
 func (h *Handler) GetPaymentHandler(ctx *gin.Context) {
-	id := ctx.Param("payment-id")
+    h.Logger.Info("Handling GetPayment request")
 
-	resp, err := h.Payment.GetPayment(ctx, &pb.GetPaymentRequest{Id: id})
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    id := ctx.Param("payment-id")
 
-	ctx.JSON(http.StatusOK, resp.Payment)
+    resp, err := h.Payment.GetPayment(ctx, &pb.GetPaymentRequest{Id: id})
+    if err != nil {
+        h.Logger.Error("Error getting payment: %v", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
+
+    ctx.JSON(http.StatusOK, resp.Payment)
 }
+
 
 // UpdatePaymentHandler updates the payment record
 // @Summary Update Payment
@@ -78,25 +84,29 @@ func (h *Handler) GetPaymentHandler(ctx *gin.Context) {
 // @Failure 400 {object} string "Bad Request"
 // @Router /api/payments/{payment-id} [put]
 func (h *Handler) UpdatePaymentHandler(ctx *gin.Context) {
-	id := ctx.Param("payment-id")
+    h.Logger.Info("Handling UpdatePayment request")
 
-	payment := pb.UpdatePaymentRequest{}
+    id := ctx.Param("payment-id")
 
-	if err := ctx.ShouldBindJSON(&payment); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
-	payment.Id = id
+    payment := pb.UpdatePaymentRequest{}
 
-	resp, err := h.Payment.UpdatePayment(ctx, &payment)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    if err := ctx.ShouldBindJSON(&payment); err != nil {
+        h.Logger.Error("Error binding JSON:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
+    payment.Id = id
 
-	ctx.JSON(http.StatusOK, resp.Payment)
+    resp, err := h.Payment.UpdatePayment(ctx, &payment)
+    if err != nil {
+        h.Logger.Error("Error updating payment:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
+
+    ctx.JSON(http.StatusOK, resp.Payment)
 }

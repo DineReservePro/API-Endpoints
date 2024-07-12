@@ -2,7 +2,9 @@ package middleware
 
 import (
 	"api-gateway/api/token"
+	"api-gateway/config"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -42,5 +44,20 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Set("user_email", claims.Email)
 
 		c.Next()
+	}
+}
+
+func LoggerMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		config.Logger.Info("Request received",
+			slog.String("method", c.Request.Method),
+			slog.String("path", c.Request.URL.Path),
+		)
+
+		c.Next()
+
+		config.Logger.Info("Response sent",
+			slog.Int("status", c.Writer.Status()),
+		)
 	}
 }

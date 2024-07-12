@@ -1,0 +1,4 @@
+{"time":"2024-07-12T12:23:15.251982677+05:00","level":"INFO","msg":"Starting the application..."}
+{"time":"2024-07-12T12:23:15.252449678+05:00","level":"INFO","msg":"Server is running","PORT":":8080"}
+{"time":"2024-07-12T12:35:38.366902161+05:00","level":"INFO","msg":"Starting the application..."}
+{"time":"2024-07-12T12:35:38.367323053+05:00","level":"INFO","msg":"Server is running","PORT":":8080"}

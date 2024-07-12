@@ -19,24 +19,27 @@ import (
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations [post]
 func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
-	reservation := pb.CreateReservationRequest{}
+    h.Logger.Info("Handling CreateReservation request")
 
-	if err := ctx.ShouldBindJSON(&reservation); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    reservation := pb.CreateReservationRequest{}
+    if err := ctx.ShouldBindJSON(&reservation); err != nil {
+        h.Logger.Error("Error binding JSON:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	resp, err := h.Reservation.CreateReservation(ctx, &reservation)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    resp, err := h.Reservation.CreateReservation(ctx, &reservation)
+    if err != nil {
+        h.Logger.Error("Error creating reservation:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	ctx.JSON(http.StatusOK, resp.Reservation)
+    ctx.JSON(http.StatusOK, resp.Reservation)
 }
 
 // ListReservationHandler lists all reservations.
@@ -51,28 +54,32 @@ func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations [get]
 func (h *Handler) ListReservationHandler(ctx *gin.Context) {
-	var filter pb.ListReservationsRequest
-	if err := ctx.ShouldBindQuery(&filter);err != nil{
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    h.Logger.Info("Handling ListReservation request")
 
-	if filter.Limit == 0{
-		filter.Limit = 10
-	}
-	resp, err := h.Reservation.ListReservations(ctx, &filter)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    var filter pb.ListReservationsRequest
+    if err := ctx.ShouldBindQuery(&filter); err != nil {
+        h.Logger.Error("Error binding query parameters:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	ctx.JSON(http.StatusOK, resp)
+    if filter.Limit == 0 {
+        filter.Limit = 10
+    }
+
+    resp, err := h.Reservation.ListReservations(ctx, &filter)
+    if err != nil {
+        h.Logger.Error("Error listing reservations:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
+
+    ctx.JSON(http.StatusOK, resp)
 }
-
 // GetReservationHandler retrieves a specific reservation by ID.
 // @Summary Get Reservation
 // @Description Get a specific reservation by ID
@@ -86,17 +93,20 @@ func (h *Handler) ListReservationHandler(ctx *gin.Context) {
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/{reservation-id} [get]
 func (h *Handler) GetReservationHandler(ctx *gin.Context) {
-	id := ctx.Param("reservation-id")
+    h.Logger.Info("Handling GetReservation request")
 
-	resp, err := h.Reservation.GetReservation(ctx, &pb.GetReservationRequest{Id: id})
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    id := ctx.Param("reservation-id")
 
-	ctx.JSON(http.StatusOK, resp.Reservation)
+    resp, err := h.Reservation.GetReservation(ctx, &pb.GetReservationRequest{Id: id})
+    if err != nil {
+        h.Logger.Error("Error getting reservation:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
+
+    ctx.JSON(http.StatusOK, resp.Reservation)
 }
 
 // UpdateReservationHandler updates an existing reservation.
@@ -113,28 +123,32 @@ func (h *Handler) GetReservationHandler(ctx *gin.Context) {
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/{reservation-id} [put]
 func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
-	id := ctx.Param("reservation-id")
+    h.Logger.Info("Handling UpdateReservation request")
 
-	reservation := pb.UpdateReservationRequest{}
+    id := ctx.Param("reservation-id")
 
-	if err := ctx.ShouldBindJSON(&reservation); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
-	reservation.Id = id
+    reservation := pb.UpdateReservationRequest{}
+    if err := ctx.ShouldBindJSON(&reservation); err != nil {
+        h.Logger.Error("Error binding JSON:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
+    reservation.Id = id
 
-	resp, err := h.Reservation.UpdateReservation(ctx, &reservation)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    resp, err := h.Reservation.UpdateReservation(ctx, &reservation)
+    if err != nil {
+        h.Logger.Error("Error updating reservation:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	ctx.JSON(http.StatusOK, resp.Reservation)
+    ctx.JSON(http.StatusOK, resp.Reservation)
 }
+
 
 // DeleteReservationHandler deletes a specific reservation by ID.
 // @Summary Delete Reservation
@@ -149,28 +163,32 @@ func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/{reservation-id} [delete]
 func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
-	id := ctx.Param("reservation-id")
+    h.Logger.Info("Handling DeleteReservation request")
 
-	reservation := pb.DeleteReservationRequest{}
+    id := ctx.Param("reservation-id")
 
-	if err := ctx.ShouldBindJSON(&reservation); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
-	reservation.Id = id
+    reservation := pb.DeleteReservationRequest{}
+    if err := ctx.ShouldBindJSON(&reservation); err != nil {
+        h.Logger.Error("Error binding JSON:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
+    reservation.Id = id
 
-	resp, err := h.Reservation.DeleteReservation(ctx, &reservation)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    resp, err := h.Reservation.DeleteReservation(ctx, &reservation)
+    if err != nil {
+        h.Logger.Error("Error deleting reservation:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	ctx.JSON(http.StatusOK, resp.Message)
+    ctx.JSON(http.StatusOK, resp.Message)
 }
+
 
 // CheckReservationHandler checks the status of a reservation.
 // @Summary Check Reservation
@@ -185,25 +203,29 @@ func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/check [post]
 func (h *Handler) CheckReservationHandler(ctx *gin.Context) {
-	checkReq := pb.CheckReservationRequest{}
+    h.Logger.Info("Handling CheckReservation request")
 
-	if err := ctx.ShouldBindJSON(&checkReq); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    checkReq := pb.CheckReservationRequest{}
+    if err := ctx.ShouldBindJSON(&checkReq); err != nil {
+        h.Logger.Error("Error binding JSON:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	resp, err := h.Reservation.CheckReservation(ctx, &checkReq)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    resp, err := h.Reservation.CheckReservation(ctx, &checkReq)
+    if err != nil {
+        h.Logger.Error("Error checking reservation:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	ctx.JSON(http.StatusOK, resp)
+    ctx.JSON(http.StatusOK, resp)
 }
+
 
 // OrderMealsHandler handles ordering meals for a reservation.
 // @Summary Order Meals
@@ -218,22 +240,25 @@ func (h *Handler) CheckReservationHandler(ctx *gin.Context) {
 // @Failure 500 {object} string "Internal Server Error"
 // @Router /api/reservations/order [post]
 func (h *Handler) OrderMealsHandler(ctx *gin.Context) {
-	orderReq := pb.OrderMealsRequest{}
+    h.Logger.Info("Handling OrderMeals request")
 
-	if err := ctx.ShouldBindJSON(&orderReq); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    orderReq := pb.OrderMealsRequest{}
+    if err := ctx.ShouldBindJSON(&orderReq); err != nil {
+        h.Logger.Error("Error binding JSON:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	resp, err := h.Reservation.OrderMeals(ctx, &orderReq)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
-		})
-		return
-	}
+    resp, err := h.Reservation.OrderMeals(ctx, &orderReq)
+    if err != nil {
+        h.Logger.Error("Error ordering meals:", "error", err.Error())
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "Error": err.Error(),
+        })
+        return
+    }
 
-	ctx.JSON(http.StatusOK, resp)
+    ctx.JSON(http.StatusOK, resp)
 }
